@@ -1,0 +1,15 @@
+﻿#pragma kernel Assert
+float SectorRadius;
+float3 SectorPos;
+RWStructuredBuffer<float4> VertColors;
+RWStructuredBuffer<float3> Vertices;
+
+[numthreads(8,8,1)]
+void Assert(uint3 id : SV_DispatchThreadID)
+{
+	float3 delta = Vertices[id.x] - SectorPos;
+	float dis = dot(delta, delta);
+	float r2 = SectorRadius*SectorRadius;
+	float value = step(r2, dis);
+	VertColors[id.x] = ( value * float4(1, 1, 1, 1) + (1 - value) * float4(0, 0, 0, 0) )*VertColors[id.x];
+}
